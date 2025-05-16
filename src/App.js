@@ -1,10 +1,13 @@
-import './pi-sdk';
 import React, { useEffect, useState } from 'react';
+import './styles.css';
+import './pi-sdk';
+import AddPriceForm from './AddPriceForm';
+import PriceList from './PriceList';
 
 function App() {
   const [username, setUsername] = useState(null);
+  const [refresh, setRefresh] = useState(false);
 
-  // Connexion automatique via Pi SDK
   useEffect(() => {
     const connectWithPi = async () => {
       if (window?.Pi) {
@@ -25,17 +28,24 @@ function App() {
     connectWithPi();
   }, []);
 
+  const handlePriceAdded = () => {
+    setRefresh(!refresh); // force la mise à jour de la liste
+  };
+
   return (
-    <div style={{ padding: 20, fontFamily: 'Arial', textAlign: 'center' }}>
+    <div className="container">
       <h1>PiPrices</h1>
       <p>Know the real-world value of Pi in your region.</p>
 
       {username ? (
-        <p>Welcome, @{username}!</p>
+        <>
+          <p>Welcome, @{username}!</p>
+          <AddPriceForm onPriceAdded={handlePriceAdded} />
+          <PriceList key={refresh} />
+        </>
       ) : (
         <button
           onClick={() => window?.Pi && window.Pi.authenticate(['username'], () => {})}
-          style={{ padding: '10px 20px', fontSize: '16px' }}
         >
           Connect with Pi
         </button>
