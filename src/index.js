@@ -1,13 +1,10 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-import './styles.css';
+// src/index.js
 
-// Crée le point d'ancrage React dans l'élément root de index.html
-const root = ReactDOM.createRoot(document.getElementById('root'));
+window.__PI_NETWORK_SANDBOX__ = true;
 
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
+root.render(<App />);
