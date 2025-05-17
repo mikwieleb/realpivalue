@@ -1,5 +1,5 @@
 // src/pi-sdk.js
-
+window.__PI_NETWORK_SANDBOX__ = true;
 if (typeof window !== 'undefined') {
   const isPiBrowser = window?.navigator?.userAgent.includes('PiBrowser');
   if (isPiBrowser && !window.Pi) {
