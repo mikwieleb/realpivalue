@@ -1,10 +1,8 @@
-import { Keypair, Server } from 'stellar-sdk';
+import { Server } from 'stellar-sdk';
 
 const server = new Server('https://api.testnet.minepi.com');
 
-export async function verifyPayment(paymentData) {
-  const { txid, user_uid } = paymentData;
-
+export async function verifyPayment({ txid, user_uid }) {
   try {
     const transaction = await server.transactions().transaction(txid).call();
     const memo = transaction.memo;
@@ -23,7 +21,7 @@ export async function verifyPayment(paymentData) {
 
     return { verified: !!paymentOp };
   } catch (err) {
-    console.error('Erreur lors de la vérification :', err);
+    console.error('Erreur de vérification :', err);
     return { verified: false };
   }
 }
