@@ -1,22 +1,29 @@
+// src/PiPaymentButton.js
+
 import React from "react";
 
-const PiPaymentButton = ({ accessToken }) => {
+const PiPaymentButton = () => {
   const handlePayment = async () => {
-    const paymentData = {
-      amount: 0.001,
-      memo: "Paiement test RealPiValue",
-      metadata: { type: "test", user: "realpivalue" }
-    };
+    const Pi = window.Pi;
+
+    if (!Pi) {
+      console.error("Pi SDK non chargé.");
+      return;
+    }
 
     try {
-      const payment = await window.Pi.createPayment(paymentData, {
-        onReadyForServerApproval: async (paymentId) => {
-          console.log("Ready for server approval:", paymentId);
-          // Appeler votre backend ici si nécessaire
+      const paymentData = {
+        amount: 0.001,
+        memo: "Paiement test RealPiValue",
+        metadata: { paymentId: "realpivalue-test-001" },
+      };
+
+      const callbacks = {
+        onReadyForServerApproval: (paymentId) => {
+          console.log("Prêt pour approbation serveur :", paymentId);
         },
-        onReadyForServerCompletion: async (paymentId, txid) => {
-          console.log("Ready for server completion:", paymentId, txid);
-          // Valider la transaction côté serveur si besoin
+        onReadyForServerCompletion: (paymentId, txid) => {
+          console.log("Prêt pour finalisation serveur :", paymentId, txid);
         },
         onCancel: (paymentId) => {
           console.log("Paiement annulé :", paymentId);
@@ -24,16 +31,16 @@ const PiPaymentButton = ({ accessToken }) => {
         onError: (error, payment) => {
           console.error("Erreur de paiement :", error, payment);
         },
-      });
+      };
 
-      console.log("Paiement lancé :", payment);
+      await Pi.createPayment(paymentData, callbacks, { sandbox: true });
     } catch (error) {
-      console.error("Erreur lors du lancement du paiement :", error);
+      console.error("Erreur lors du paiement :", error);
     }
   };
 
   return (
-    <button onClick={handlePayment} style={{ marginTop: "20px" }}>
+    <button onClick={handlePayment}>
       Payer 0.001 Pi
     </button>
   );
