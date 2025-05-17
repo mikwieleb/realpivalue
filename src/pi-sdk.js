@@ -1,10 +1,11 @@
-// Initialise le SDK Pi avec ton App ID depuis les variables d’environnement
+// src/pi-sdk.js
 
-const appId = process.env.REACT_APP_PI_APP_ID;
-
-if (window.Pi) {
-  window.Pi.init({ version: "2.0", appId });
-  console.log("Pi SDK initialisé avec l'appId :", appId);
-} else {
-  console.warn("Pi SDK non disponible (hors de l'application Pi Network)");
+if (typeof window !== 'undefined') {
+  const isPiBrowser = window?.navigator?.userAgent.includes('PiBrowser');
+  if (isPiBrowser && !window.Pi) {
+    const script = document.createElement('script');
+    script.src = 'https://sdk.minepi.com/pi-sdk.js';
+    script.async = true;
+    document.head.appendChild(script);
+  }
 }
