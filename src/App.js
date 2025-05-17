@@ -17,6 +17,7 @@ function App() {
       try {
         const scopes = ["username", "payments"];
         const sandbox = true;
+await Pi.authenticate(scopes, onIncompletePaymentFound, { sandbox });
 
         const user = await Pi.authenticate(scopes, onIncompletePaymentFound, { sandbox });
         setPiUser(user);
