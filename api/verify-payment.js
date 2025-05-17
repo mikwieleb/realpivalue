@@ -8,6 +8,7 @@ export default async function handler(req, res) {
   try {
     const paymentData = req.body;
     const result = await verifyPayment(paymentData);
+
     if (result.verified) {
       res.status(200).json({ success: true });
     } else {
