@@ -1,7 +1,8 @@
 {
-  "name": "realpivalue",
+  "name": "piprices",
   "version": "1.0.0",
   "private": true,
+  "description": "PiPrices - Authentification Sandbox avec Pi Network SDK",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -12,5 +13,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1"
-  }
+  },
+  "keywords": [],
+  "author": "mikwieleb",
+  "license": "MIT"
 }
