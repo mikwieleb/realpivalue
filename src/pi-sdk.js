@@ -1,7 +1,6 @@
 // src/pi-sdk.js
 
 if (typeof window !== 'undefined') {
-  // Active le mode sandbox AVANT de charger le SDK
   window.__PI_NETWORK_SANDBOX__ = true;
 
   const isPiBrowser = window?.navigator?.userAgent.includes('PiBrowser');
