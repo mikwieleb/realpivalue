@@ -1,50 +1,44 @@
-import React, { useEffect, useState } from "react";
-import PiPaymentButton from "./PiPaymentButton";
-import "./styles.css";
-import "./pi-sdk";
+import React, { useEffect, useState } from 'react';
+import './pi-sdk';
 
 function App() {
   const [piUser, setPiUser] = useState(null);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const initPi = async () => {
-      const Pi = window.Pi;
-      if (!Pi) {
-        console.error("Pi SDK non disponible");
+      if (!window.Pi) {
+        console.error("Pi SDK not loaded");
         return;
       }
 
       try {
-        const scopes = ["username", "payments"];
-        const sandbox = true;
-await Pi.authenticate(scopes, onIncompletePaymentFound, { sandbox });
+        const scopes = ['username'];
+        const onIncompletePaymentFound = (payment) => {
+          console.log("Incomplete payment:", payment);
+        };
 
-        const user = await Pi.authenticate(scopes, onIncompletePaymentFound, { sandbox });
-        setPiUser(user);
-        console.log("Utilisateur connecté :", user);
-      } catch (error) {
-        console.error("Erreur d'authentification Pi :", error);
+        const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+        setPiUser(authResult.user);
+        console.log("Pi Auth success:", authResult);
+      } catch (err) {
+        console.error("Pi Auth error:", err);
+        setError(err.message);
       }
-    };
-
-    const onIncompletePaymentFound = (payment) => {
-      console.log("Paiement incomplet détecté :", payment);
     };
 
     initPi();
   }, []);
 
   return (
-    <div className="App">
-      <h1>Bienvenue dans RealPiValue</h1>
+    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
+      <h1>Bienvenue sur PiPrices</h1>
       {piUser ? (
-        <>
-          <p>Connecté en tant que : <strong>{piUser.username}</strong></p>
-          <PiPaymentButton />
-        </>
+        <p>Connecté en tant que : <strong>{piUser.username}</strong></p>
       ) : (
-        <p>Chargement du SDK Pi...</p>
+        <p>Connexion en cours…</p>
       )}
+      {error && <p style={{ color: 'red' }}>Erreur : {error}</p>}
     </div>
   );
 }
