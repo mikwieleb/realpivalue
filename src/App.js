@@ -1,3 +1,4 @@
+// src/App.js
 import React, { useEffect, useState } from 'react';
 import './pi-sdk';
 
@@ -7,22 +8,21 @@ function App() {
 
   useEffect(() => {
     const initPi = async () => {
-      if (!window.Pi) {
-        console.error("Pi SDK not loaded");
-        return;
-      }
-
       try {
-        const scopes = ['username'];
-        const onIncompletePaymentFound = (payment) => {
-          console.log("Incomplete payment:", payment);
-        };
+        if (window.Pi) {
+          const scopes = ['username', 'payments'];
+          const onIncompletePaymentFound = (payment) => {
+            console.log('Paiement incomplet trouvé:', payment);
+          };
 
-        const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
-        setPiUser(authResult.user);
-        console.log("Pi Auth success:", authResult);
+          const user = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+          setPiUser(user);
+        } else {
+          console.log("Pi SDK non initialisé");
+          setError("Pi SDK non initialisé");
+        }
       } catch (err) {
-        console.error("Pi Auth error:", err);
+        console.error("Erreur d'authentification Pi :", err);
         setError(err.message);
       }
     };
@@ -31,14 +31,15 @@ function App() {
   }, []);
 
   return (
-    <div style={{ padding: '2rem', fontFamily: 'Arial' }}>
-      <h1>Bienvenue sur PiPrices</h1>
+    <div>
+      <h1>Bienvenue dans PiPrices</h1>
       {piUser ? (
-        <p>Connecté en tant que : <strong>{piUser.username}</strong></p>
+        <p>Connecté en tant que : {piUser.username}</p>
+      ) : error ? (
+        <p>Erreur : {error}</p>
       ) : (
-        <p>Connexion en cours…</p>
+        <p>Connexion en cours...</p>
       )}
-      {error && <p style={{ color: 'red' }}>Erreur : {error}</p>}
     </div>
   );
 }
