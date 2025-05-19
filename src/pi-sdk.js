@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
     script.src = 'https://sdk.minepi.com/pi-sdk.js';
     script.async = true;
     script.onload = () => {
-      console.log('Pi SDK chargé');
+      console.log('Pi SDK chargé avec succès');
     };
     document.head.appendChild(script);
   }
