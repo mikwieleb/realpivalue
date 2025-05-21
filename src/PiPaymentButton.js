@@ -1,46 +1,47 @@
 // src/PiPaymentButton.js
 
-import React from "react";
+import React from 'react';
 
-const PiPaymentButton = () => {
-  const handlePayment = async () => {
-    const Pi = window.Pi;
-
-    if (!Pi) {
-      console.error("Pi SDK non chargé.");
+const PiPaymentButton = ({ username }) => {
+  const handlePiPayment = async () => {
+    if (!window.Pi) {
+      alert("Pi SDK non disponible. Utilise le Pi Browser.");
       return;
     }
 
-    try {
-      const paymentData = {
-        amount: 0.001,
-        memo: "Paiement test RealPiValue",
-        metadata: { paymentId: "realpivalue-test-001" },
-      };
+    const paymentData = {
+      amount: 0.001,
+      memo: "Paiement test Pi",
+      metadata: { user: username },
+    };
 
-      const callbacks = {
-        onReadyForServerApproval: (paymentId) => {
-          console.log("Prêt pour approbation serveur :", paymentId);
-        },
-        onReadyForServerCompletion: (paymentId, txid) => {
-          console.log("Prêt pour finalisation serveur :", paymentId, txid);
-        },
-        onCancel: (paymentId) => {
-          console.log("Paiement annulé :", paymentId);
-        },
-        onError: (error, payment) => {
-          console.error("Erreur de paiement :", error, payment);
-        },
-      };
-
-      await Pi.createPayment(paymentData, callbacks, { sandbox: true });
-    } catch (error) {
-      console.error("Erreur lors du paiement :", error);
-    }
+    await window.Pi.createPayment(paymentData, {
+      onReadyForServerApproval: async (paymentId) => {
+        await fetch('/api/verify-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paymentId }),
+        });
+      },
+      onReadyForServerCompletion: async (paymentId, txid) => {
+        await fetch('/api/complete-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ paymentId, txid }),
+        });
+        alert('Paiement terminé !');
+      },
+      onCancel: (paymentId) => {
+        console.log('Paiement annulé', paymentId);
+      },
+      onError: (error) => {
+        console.error('Erreur paiement Pi :', error);
+      },
+    });
   };
 
   return (
-    <button onClick={handlePayment}>
+    <button onClick={handlePiPayment}>
       Payer 0.001 Pi
     </button>
   );
