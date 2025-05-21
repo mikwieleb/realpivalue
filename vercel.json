@@ -1,6 +1,9 @@
 {
-  "rewrites": [
-    { "source": "/(.*)", "destination": "/" }
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://realpivalue.vercel.app",
+      "permanent": true
+    }
   ]
 }
- 
