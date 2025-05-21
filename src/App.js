@@ -1,45 +1,44 @@
 // src/App.js
 
 import React, { useEffect, useState } from 'react';
-import './pi-sdk'; // Important pour charger le SDK en sandbox
+import PiPaymentButton from './PiPaymentButton';
+import './pi-sdk';
 
 function App() {
   const [piUser, setPiUser] = useState(null);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const initPi = async () => {
-      if (window.Pi) {
-        try {
-          const scopes = ['username'];
-          const onIncompletePaymentFound = (payment) => {
-            console.log('Paiement incomplet détecté :', payment);
-          };
+      if (!window.Pi) return;
 
-          const user = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
-          setPiUser(user);
-          console.log('Utilisateur Pi connecté :', user);
-        } catch (err) {
-          console.error('Erreur d\'authentification Pi :', err);
-          setError(err.message);
-        }
-      } else {
-        console.warn('Le SDK Pi n\'est pas encore chargé.');
+      try {
+        const scopes = ['username'];
+        const authResult = await window.Pi.authenticate(scopes, onIncompletePaymentFound);
+        setPiUser(authResult.user);
+        console.log("Utilisateur connecté :", authResult.user);
+      } catch (error) {
+        console.error("Erreur d'authentification :", error);
       }
+    };
+
+    const onIncompletePaymentFound = (payment) => {
+      console.warn('Paiement incomplet détecté :', payment);
     };
 
     initPi();
   }, []);
 
   return (
-    <div style={{ padding: 20, fontFamily: 'Arial' }}>
-      <h1>Bienvenue sur PiPrices</h1>
+    <div style={{ textAlign: 'center', paddingTop: '100px', background: '#f3e6ff', height: '100vh' }}>
+      <h1 style={{ color: '#6b00b3' }}>PiPrices</h1>
+      <p>Connecté en tant que : <strong>{piUser?.username || "non connecté"}</strong></p>
+
       {piUser ? (
-        <p>Connecté en tant que : <strong>@{piUser.username}</strong></p>
-      ) : error ? (
-        <p style={{ color: 'red' }}>Erreur : {error}</p>
+        <PiPaymentButton username={piUser.username} />
       ) : (
-        <p>Connexion en cours...</p>
+        <button onClick={() => window.location.reload()}>
+          Connect with Pi
+        </button>
       )}
     </div>
   );
