@@ -1,6 +1,4 @@
-import { Keypair, Server, TransactionBuilder, Networks, Operation } from 'stellar-sdk';
-
-const server = new Server('https://api.testnet.minepi.com');
+// api/complete-payment.js
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -9,23 +7,10 @@ export default async function handler(req, res) {
 
   const { paymentId, txid } = req.body;
 
-  try {
-    // Récupère la transaction
-    const transaction = await server.transactions().transaction(txid).call();
+  console.log("Paiement complété :", paymentId, "Transaction ID :", txid);
 
-    // Vérifie que la transaction existe bien
-    if (!transaction) {
-      return res.status(400).json({ error: "Transaction introuvable" });
-    }
+  // Ici, tu peux marquer la commande comme payée, stocker dans la base, etc.
+  // Pour le testnet, on valide simplement
 
-    // Crée une signature ou logique côté serveur (factice ici)
-    console.log("Transaction validée côté serveur :", txid, "pour paymentId :", paymentId);
-
-    // Tu peux aussi stocker cette confirmation dans une base de données ici
-
-    res.status(200).json({ success: true });
-  } catch (error) {
-    console.error("Erreur server completion :", error);
-    res.status(500).json({ error: error.message });
-  }
+  return res.status(200).json({ message: 'Paiement complété côté serveur' });
 }
