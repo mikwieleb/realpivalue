@@ -1,6 +1,7 @@
 // src/App.js
 
 import React, { useEffect, useState } from 'react';
+console.log("Test redeploy");
 import PiPaymentButton from './PiPaymentButton';
 import './pi-sdk';
 
