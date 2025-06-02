@@ -1,33 +1,37 @@
 // src/PiPaymentButton.js
 
 import React, { useState } from 'react';
+import { initPiSdk } from './pi-sdk';
 
-function PiPaymentButton({ username }) {
+function PiPaymentButton() {
   const [message, setMessage] = useState("");
 
   const handlePayment = async () => {
-    if (!window.Pi) {
-      setMessage("Pi SDK non disponible.");
+    const Pi = initPiSdk();
+    if (!Pi) {
+      setMessage("❌ Pi SDK non disponible.");
       return;
     }
 
-    const paymentData = {
-      amount: 0.001,
-      memo: "Paiement Test Pi",
-      metadata: { user: username }
-    };
-
     try {
-      const payment = await window.Pi.createPayment(paymentData, {
+      const scopes = ["username", "payments"];
+      const auth = await Pi.authenticate(scopes);
+      const username = auth.user.username;
+
+      const paymentData = {
+        amount: 0.001,
+        memo: "Paiement Test Pi",
+        metadata: { user: username }
+      };
+
+      const payment = await Pi.createPayment(paymentData, {
         onReadyForServerApproval: async (paymentId) => {
-          console.log("Paiement prêt pour approbation serveur :", paymentId);
+          console.log("Paiement prêt :", paymentId);
 
           const res = await fetch("/api/verify-payment", {
             method: "POST",
-            headers: {
-              "Content-Type": "application/json"
-            },
-            body: JSON.stringify({ paymentId })
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ paymentId, username })
           });
 
           const result = await res.json();
@@ -37,18 +41,18 @@ function PiPaymentButton({ username }) {
             setMessage("❌ Paiement refusé ou invalide.");
           }
         },
-        onCancel: (paymentId) => {
-          console.warn("Paiement annulé :", paymentId);
+        onCancel: () => {
           setMessage("Paiement annulé.");
         },
-        onError: (error, payment) => {
-          console.error("Erreur lors du paiement :", error, payment);
+        onError: (error) => {
+          console.error("Erreur paiement :", error);
           setMessage("Erreur lors du paiement.");
         }
       });
-    } catch (error) {
-      console.error("Erreur d'initiation du paiement :", error);
-      setMessage("Échec du lancement du paiement.");
+
+    } catch (err) {
+      console.error("Erreur globale :", err);
+      setMessage("❌ Échec de l'opération.");
     }
   };
 
