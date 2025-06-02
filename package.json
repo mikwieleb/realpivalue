@@ -1,8 +1,8 @@
 {
-  "name": "piprices",
+  "name": "realpivalue",
   "version": "1.0.0",
   "private": true,
-  "description": "PiPrices - Authentification Sandbox avec Pi Network SDK",
+  "description": "RealPiValue - Paiement Sandbox avec Pi Network SDK",
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
@@ -13,6 +13,9 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
   },
   "keywords": [],
   "author": "mikwieleb",
